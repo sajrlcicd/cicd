@@ -1,10 +1,10 @@
+// page.tsx
 import { Metadata } from 'next';
 import { lusitana } from '@/app/ui/fonts';
 import CustomersTable from '@/app/ui/customers/table';
-import { fetchCustomers } from '@/app/lib/data';
+import { fetchFilteredCustomers } from '@/app/lib/data';
 import { Suspense } from 'react';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
-import { FormattedCustomersTable } from '@/app/lib/definitions';
 import Pagination from '@/app/ui/invoices/pagination';
 
 export const metadata: Metadata = {
@@ -20,13 +20,8 @@ export default async function Page({
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page || 1);
 
-  const allCustomers: FormattedCustomersTable[] = await fetchCustomers();
-  if (!allCustomers) return null;
-  const filteredCustomers = allCustomers.filter(
-    (customer) =>
-      customer.name.toLowerCase().includes(query.toLowerCase()) ||
-      customer.email.toLowerCase().includes(query.toLowerCase()),
-  );
+  const filteredCustomers = await fetchFilteredCustomers(query);
+  if (!filteredCustomers) return null;
 
   const pageSize = 10;
   const paginatedCustomers = filteredCustomers.slice(
