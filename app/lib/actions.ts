@@ -1,11 +1,18 @@
 'use server';
 
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
+import { Pool } from 'pg';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: {
+    rejectUnauthorized: false, // For AWS RDS, to allow SSL without validating the certificate
+  },
+});
 
 export type State = {
   errors?: {
@@ -53,10 +60,13 @@ export async function createInvoice(prevState: State, formData: FormData) {
   const date = new Date().toISOString().split('T')[0];
 
   try {
-    await sql`
-    INSERT INTO invoices (customer_id, amount, status, date)
-    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-  `;
+    await pool.query(
+      `
+      INSERT INTO invoices (customer_id, amount, status, date)
+      VALUES ($1, $2, $3, $4)
+    `,
+      [customerId, amountInCents, status, date],
+    );
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create Invoice.',
@@ -79,13 +89,16 @@ export async function updateInvoice(id: string, formData: FormData) {
   const amountInCents = amount * 100;
 
   try {
-    await sql`
-    UPDATE invoices
-    SET customer_id = ${customerId},
-        amount = ${amountInCents},
-        status = ${status}
-    WHERE id = ${id}
-  `;
+    await pool.query(
+      `
+      UPDATE invoices
+      SET customer_id = $1,
+          amount = $2,
+          status = $3
+      WHERE id = $4
+    `,
+      [customerId, amountInCents, status, id],
+    );
   } catch (error) {
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
@@ -96,10 +109,13 @@ export async function updateInvoice(id: string, formData: FormData) {
 
 export async function deleteInvoice(id: string) {
   try {
-    await sql`
-    DELETE FROM invoices
-    WHERE id = ${id}
-  `;
+    await pool.query(
+      `
+      DELETE FROM invoices
+      WHERE id = $1
+    `,
+      [id],
+    );
     revalidatePath('/dashboard/invoices');
     return { message: 'Deleted Invoice.' };
   } catch (error) {
@@ -108,8 +124,8 @@ export async function deleteInvoice(id: string) {
 }
 
 export async function authenticate(
-    prevState: string | undefined,
-    formData: FormData,
+  prevState: string | undefined,
+  formData: FormData,
 ) {
   try {
     await signIn('credentials', formData);

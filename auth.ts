@@ -5,15 +5,31 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
+import { Pool } from 'pg';
 
+const pool = new Pool({
+    connectionString: process.env.POSTGRES_URL,
+    ssl: {
+        rejectUnauthorized: false, // For AWS RDS, to allow SSL without validating the certificate
+    },
+});
+
+// Log the connection status
+pool
+  .connect()
+  .then(() => console.log('Connected to the database'))
+  .catch((err) => console.error('Database connection error:', err));
 async function getUser(email: string): Promise<User | undefined> {
-    try {
-        const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
-        return user.rows[0];
-    } catch (error) {
-        console.error('Failed to fetch user:', error);
-        throw new Error('Failed to fetch user.');
-    }
+  try {
+    const result = await pool.query<User>(
+      'SELECT * FROM users WHERE email = $1',
+      [email],
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    throw new Error('Failed to fetch user.');
+  }
 }
 
 export const { auth, signIn, signOut } = NextAuth({
