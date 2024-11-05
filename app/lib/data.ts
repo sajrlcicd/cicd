@@ -213,6 +213,7 @@ export async function fetchCustomers() {
     return customers;
   } catch (err) {
     console.error('Database Error:', err);
+    return [];
   }
 }
 
@@ -248,6 +249,7 @@ export async function fetchFilteredCustomers(query: string) {
     return customers;
   } catch (err) {
     console.error('Database Error:', err);
+    return [];
   }
 }
 

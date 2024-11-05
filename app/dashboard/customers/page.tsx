@@ -1,9 +1,49 @@
-import { Metadata} from "next";
+import { Metadata } from 'next';
+import { lusitana } from '@/app/ui/fonts';
+import CustomersTable from '@/app/ui/customers/table';
+import { fetchCustomers } from '@/app/lib/data';
+import { Suspense } from 'react';
+import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
+import { FormattedCustomersTable } from '@/app/lib/definitions';
+import Pagination from '@/app/ui/invoices/pagination';
 
 export const metadata: Metadata = {
   title: 'Customers',
+  description: 'Customers',
 };
 
-export default function Page() {
-  return <p>Customers Page</p>
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: { query?: string; page?: string };
+}) {
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page || 1);
+
+  const allCustomers: FormattedCustomersTable[] = await fetchCustomers();
+  if (!allCustomers) return null;
+  const filteredCustomers = allCustomers.filter(
+    (customer) =>
+      customer.name.toLowerCase().includes(query.toLowerCase()) ||
+      customer.email.toLowerCase().includes(query.toLowerCase()),
+  );
+
+  const pageSize = 10;
+  const paginatedCustomers = filteredCustomers.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  return (
+    <div className="w-full">
+      <Suspense fallback={<InvoicesTableSkeleton />}>
+        <CustomersTable customers={paginatedCustomers} />
+      </Suspense>
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination
+          totalPages={Math.ceil(filteredCustomers.length / pageSize)}
+        />
+      </div>
+    </div>
+  );
 }
