@@ -11,39 +11,49 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Step 2: Set up AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - name: Build Deployment package
+        working-directory: ./react-app
+        run: |
+          npm install
+
+          npm run build
+
+          zip -r deploy.zip dist server.js package.json Procfile -x '*.git*'
+
+          mv deploy.zip ../deploy.zip
+
+      - name: Verify contents of deploy.zip
+        run: unzip -l deploy.zip
+
+      - name: Get timestamp
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Run string replace
+        uses: frabert/replace-string-action@master
+        id: format-time
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "eu-north-1"  # Replace with your AWS region
+          # replaces '[:\.]+' in the timestamp with '-'
+          pattern: '[:\.]+'
+          string: "${{ steps.current-time.outputs.time }}"
+          replace-with: '-'
+          flags: 'g'
 
-      # Step 3: Zip the application files
-      - name: Zip application files
-        run: zip -r deploy.zip . -x "*.git*"
 
-      # Step 4: Upload application to Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: "cicd-team-1"       # Replace with your Elastic Beanstalk application name
-          environment_name: "e-b3y2aw3aqm"       # Replace with your Elastic Beanstalk environment name
-          version_label: "v${{ github.run_number }}"    # Optional version label
-          deployment_package: "deploy.zip"              # The zipped file created in the previous step
-
-      # Optional Step 5: Notify on deployment success or failure
-      - name: Notify Success
-        if: success()
-        run: echo "Deployment to Elastic Beanstalk successful!"
-
-      - name: Notify Failure
-        if: failure()
-        run: echo "Deployment to Elastic Beanstalk failed!"
+          application_name: cicd-team-1
+          environment_name: e-b3y2aw3aqm
+          version_label: ${{ steps.format-time.outputs.replaced }}
+          region: eu-north-1
+          deployment_package: deploy.zip
+          wait_for_deployment: true
