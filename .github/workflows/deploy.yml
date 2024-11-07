@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Deployment package
-        working-directory: ./cicd
+        working-directory: ./
         run: |
           npm install
 
