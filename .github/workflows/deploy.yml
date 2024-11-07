@@ -1,6 +1,5 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow
 
-
 name: Deploy to Elastic Beanstalk
 
 on:
@@ -31,7 +30,7 @@ jobs:
 
       # Step 4: Upload application to Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
-        uses: einarregilsson/beanstalk-deploy@v22
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
