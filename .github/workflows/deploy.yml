@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Deployment package
-        working-directory: ./
+
         run: |
           npm install
 
@@ -26,10 +26,10 @@ jobs:
 
           zip -r deploy.zip .next server.js package.json Procfile -x '*.git*'
 
-          mv deploy.zip ./deploy.zip
+          mv deploy.zip ../deploy.zip
 
       - name: Verify contents of deploy.zip
-        run: unzip -l ./deploy.zip
+        run: unzip -l ../deploy.zip
 
       - name: Get timestamp
         uses: gerred/actions/current-time@master
