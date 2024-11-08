@@ -55,5 +55,5 @@ jobs:
           environment_name: e-b3y2aw3aqm
           version_label: ${{ steps.format-time.outputs.replaced }}
           region: eu-north-1
-          deployment_package: ../deploy.zip
+          deployment_package: ./deploy.zip
           wait_for_deployment: true
