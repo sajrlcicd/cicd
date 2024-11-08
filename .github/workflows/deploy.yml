@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow
 
+# This workflow uses the einaregilsson/beanstalk-deploy action to deploy to Elastic Beanstalk.
+
 name: Deploy to Elastic Beanstalk
 
 on:
