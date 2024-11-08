@@ -24,12 +24,12 @@ jobs:
 
           npm run build
 
-          zip -r deploy.zip .next server.js package.json Procfile -x '*.git*'
+          zip -r deploy.zip .next package.json Procfile -x '*.git*'
 
-          mv deploy.zip ../deploy.zip
+          mv deploy.zip deploy.zip
 
       - name: Verify contents of deploy.zip
-        run: unzip -l ../deploy.zip
+        run: unzip -l deploy.zip
 
       - name: Get timestamp
         uses: gerred/actions/current-time@master
@@ -55,5 +55,5 @@ jobs:
           environment_name: Cicd-team-1-env
           version_label: ${{ steps.format-time.outputs.replaced }}
           region: eu-north-1
-          deployment_package: ../deploy.zip
+          deployment_package: deploy.zip
           wait_for_deployment: true
