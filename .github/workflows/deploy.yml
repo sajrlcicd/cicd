@@ -24,7 +24,7 @@ jobs:
 
           npm run build
 
-          zip -r deploy.zip .next server.js package.json Procfile -x '*.git*'
+          zip -r deploy.zip .next package.json Procfile -x '*.git*'
 
           mv deploy.zip deploy.zip
 
