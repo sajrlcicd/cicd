@@ -7,8 +7,8 @@
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "seed": "node -r dotenv/config ./scripts/seed.js",
-    "test": "playwright test",
-    "start": "next start -p 8080"
+    "start": "next start",
+    "test": "playwright test"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",

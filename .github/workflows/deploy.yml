@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow
 
+# This workflow uses the einaregilsson/beanstalk-deploy action to deploy to Elastic Beanstalk.
+
 name: Deploy to Elastic Beanstalk
 
 on:
@@ -24,7 +26,7 @@ jobs:
 
           npm run build
 
-          zip -r deploy.zip .next package.json Procfile -x '*.git*'
+          zip -r deploy.zip .next package.json public Procfile -x '*.git*'
 
       - name: Verify contents of deploy.zip
         run: unzip -l deploy.zip
@@ -39,10 +41,9 @@ jobs:
         with:
           # replaces '[:\.]+' in the timestamp with '-'
           pattern: '[:\.]+'
-          string: "${{ steps.current-time.outputs.time }}"
+          string: '${{ steps.current-time.outputs.time }}'
           replace-with: '-'
           flags: 'g'
-
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -55,3 +56,11 @@ jobs:
           region: eu-north-1
           deployment_package: deploy.zip
           wait_for_deployment: true
+          environment_variables: |
+            POSTGRES_URL=${{ secrets.POSTGRES_URL }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }}
+            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+            AUTH_URL=${{ secrets.AUTH_URL }}
