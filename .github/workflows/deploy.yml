@@ -26,8 +26,6 @@ jobs:
 
           zip -r deploy.zip .next package.json Procfile -x '*.git*'
 
-          mv deploy.zip deploy.zip
-
       - name: Verify contents of deploy.zip
         run: unzip -l deploy.zip
 
