@@ -13,7 +13,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
 
     #env:
     #  POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
@@ -35,7 +35,8 @@ jobs:
 
           npm run build
 
-          zip -r deploy.zip .next package.json public Procfile -x '*.git*'
+          zip -r deploy.zip .next package.json public Procfile -x '*.git*' -x 'node_modules/*'
+
 
       - name: Verify contents of deploy.zip
         run: unzip -l deploy.zip
