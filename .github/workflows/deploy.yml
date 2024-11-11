@@ -35,25 +35,26 @@ jobs:
 
           npm run build
 
-          zip -r deploy.zip .next package.json public Procfile -x '*.git*' -x 'node_modules/*'
+          zip -r deploy.zip . -x '*.git*' 'node_modules/**' '*.github*'
+       #  zip -r deploy.zip .next package.json public Procfile -x '*.git*' -x 'node_modules/*'
 
 
       - name: Verify contents of deploy.zip
         run: unzip -l deploy.zip
 
-      - name: Get timestamp
-        uses: gerred/actions/current-time@master
-        id: current-time
+    #  - name: Get timestamp
+    #    uses: gerred/actions/current-time@master
+    #    id: current-time
 
-      - name: Run string replace
-        uses: frabert/replace-string-action@master
-        id: format-time
-        with:
+    #  - name: Run string replace
+    #    uses: frabert/replace-string-action@master
+    #    id: format-time
+    #    with:
           # replaces '[:\.]+' in the timestamp with '-'
-          pattern: '[:\.]+'
-          string: '${{ steps.current-time.outputs.time }}'
-          replace-with: '-'
-          flags: 'g'
+    #      pattern: '[:\.]+'
+    #      string: '${{ steps.current-time.outputs.time }}'
+    #      replace-with: '-'
+    #      flags: 'g'
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -62,7 +63,8 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: cicd-team-1
           environment_name: Cicd-team-1-env
-          version_label: ${{ steps.format-time.outputs.replaced }}
+        #  version_label: ${{ steps.format-time.outputs.replaced }}
+          version_label: ${{ github.sha }}
           region: eu-north-1
           deployment_package: deploy.zip
           wait_for_deployment: true
