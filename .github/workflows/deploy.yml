@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow
 
+# This workflow uses the einaregilsson/beanstalk-deploy action to deploy to Elastic Beanstalk.
+
 name: Deploy to Elastic Beanstalk
 
 on:
@@ -11,7 +13,16 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
+
+    #env:
+    #  POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+    #  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+    #  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+    #  POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+    #  POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+    #  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+    #  AUTH_URL: ${{ secrets.AUTH_URL }}
 
     steps:
       - name: Checkout
@@ -24,12 +35,11 @@ jobs:
 
           npm run build
 
-          zip -r deploy.zip .next server.js package.json Procfile -x '*.git*'
+          zip -r deploy.zip .next package.json public Procfile -x '*.git*' -x 'node_modules/*'
 
-          mv deploy.zip ../deploy.zip
 
       - name: Verify contents of deploy.zip
-        run: unzip -l ../deploy.zip
+        run: unzip -l deploy.zip
 
       - name: Get timestamp
         uses: gerred/actions/current-time@master
@@ -51,10 +61,10 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: cicd-team-1
-          environment_name: e-b3y2aw3aqm
+          environment_name: Cicd-team-1-env
           version_label: ${{ steps.format-time.outputs.replaced }}
           region: eu-north-1
-          deployment_package: ../deploy.zip
+          deployment_package: deploy.zip
           wait_for_deployment: true
           environment_variables: |
             POSTGRES_URL=${{ secrets.POSTGRES_URL }}
