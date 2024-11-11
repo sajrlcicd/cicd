@@ -17,7 +17,7 @@
     "@vercel/postgres": "^0.10.0",
     "autoprefixer": "10.4.15",
     "bcrypt": "^5.1.1",
-    "browsers": "^1.0.2",
+    "browsers": "^0.4.9",
     "clsx": "^2.0.0",
     "next": "^14.0.2",
     "next-auth": "^5.0.0-beta.5",
@@ -43,5 +43,8 @@
     "eslint-config-prettier": "9.0.0",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "0.5.4"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   }
 }
