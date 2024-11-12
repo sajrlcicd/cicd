@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - 'master'
-# Anders adds codeguru security to the workflow and test with an update to the master branch.
+# Anders test again
 permissions:
   id-token: write
   # for writing security events.
