@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - '10-code-guru'
-
+#Anders testat push och scan lokalt
 permissions:
   id-token: write
   # for writing security events.
