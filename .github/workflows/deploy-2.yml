@@ -3,24 +3,24 @@ name: branch Deploy
 on:
   push:
     branches:
-      - "10-code-guru"
+      - '10-Code-guru'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Generate build number
         id: buildnumber
         uses: einaregilsson/build-number@v3
         with:
-          token: ${{secrets.github_token}} 
+          token: ${{secrets.github_token}}
 
       - name: Generate deployment package
         run: npm run next-install && npm run generate-zip
@@ -30,8 +30,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: name-of-your-project
-          environment_name: name-of-your-project-staging
-          version_label: name-of-your-project-${{ steps.buildnumber.outputs.build_number }}
-          region: eu-nort-1
+          application_name: cicd
+          environment_name: Cicd-env
+          version_label: ${{ github.sha }}
+          region: eu-north-1
           deployment_package: deploy.zip

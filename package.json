@@ -3,11 +3,13 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "generate-zip": "sh ./scripts/generate-zip.sh",
     "lint": "next lint",
+    "next-install": "sh ./scripts/next-install.sh",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "seed": "node -r dotenv/config ./scripts/seed.js",
-    "start": "next start -p ${PORT:-3000}",
+    "start": "next start -p ${PORT}",
     "test": "playwright test"
   },
   "dependencies": {
@@ -46,6 +48,6 @@
     "prettier-plugin-tailwindcss": "0.5.4"
   },
   "engines": {
-    "node": ">=18.17.0"
+    "node": "20"
   }
 }
