@@ -2,7 +2,7 @@ name: CodeGuru Security Example
 on:
   push:
     branches:
-      - 'master'
+      - '10-code-guru'
 
 permissions:
   id-token: write
