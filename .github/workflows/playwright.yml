@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.POSTGRES_URL }}
 
     steps:
       - uses: actions/checkout@v4
@@ -30,8 +30,8 @@ jobs:
       - name: Start server
         run: npm start &  # Starts the server in the background
 
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000  # Waits until the server is available
+    #  - name: Wait for server to be ready
+    #    run: npx wait-on http://localhost:3000  # Waits until the server is available
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
