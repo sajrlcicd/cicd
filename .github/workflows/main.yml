@@ -2,7 +2,7 @@ name: CodeGuru Security Example
 on:
   push:
     branches:
-      - '10-code-guru'
+      - 'master'
 
 permissions:
   id-token: write
@@ -24,15 +24,15 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:cloudformation:eu-north-1:891612573961:stack/cicd-3/2404b1f0-a139-11ef-b42b-0a91b96a0769
-          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::061051249891:role/CodeGuruSecurityGitHubAccessRole
+          aws-region: us-east-1
           role-session-name: GitHubActionScript
 
       - name: CodeGuru Security
         uses: aws-actions/codeguru-security@v1
         with:
           source_path: .
-          aws_region: eu-north-1
+          aws_region: us-east-1
           fail_on_severity: Critical
       - name: Print findings
         run: |
@@ -41,7 +41,8 @@ jobs:
 
       # If you want content in security scanning, you’ll need to enable codescanning by going into github.
       # https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning-for-a-repository
-    #  - name: Upload result
-    #    uses: github/codeql-action/upload-sarif@v2
-    #    with:
-    #      sarif_file: codeguru-security-results.sarif.json
+      - name: Upload result
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: codeguru-security-results.sarif.json
+          
