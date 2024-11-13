@@ -15,18 +15,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Generate build number
-        id: buildnumber
-        uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          token: ${{secrets.github_token}}
-
       - name: Generate deployment package
         run: npm run next-install && npm run generate-zip
 
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v18
+        uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
