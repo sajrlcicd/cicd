@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - 'master'
-
+# Anders har uppdaterat policy i AWS för att kunna köra detta.
 permissions:
   id-token: write
   # for writing security events.
