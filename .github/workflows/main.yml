@@ -2,8 +2,8 @@ name: CodeGuru Security Example
 on:
   push:
     branches:
-      - 'master'
-# Anders har uppdaterat policy i AWS för att kunna köra detta.
+      - '10-code-guru'
+
 permissions:
   id-token: write
   # for writing security events.
@@ -24,15 +24,15 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::061051249891:role/CodeGuruSecurityGitHubAccessRole
-          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::891612573961:role/CodeGuruSecurityGitHubAccessRole
+          aws-region: eu-north-1
           role-session-name: GitHubActionScript
 
       - name: CodeGuru Security
         uses: aws-actions/codeguru-security@v1
         with:
           source_path: .
-          aws_region: us-east-1
+          aws_region: eu-north-1
           fail_on_severity: Critical
       - name: Print findings
         run: |
@@ -45,4 +45,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: codeguru-security-results.sarif.json
-          
