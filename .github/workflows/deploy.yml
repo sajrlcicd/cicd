@@ -28,18 +28,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
       - name: Build Deployment package
 
         run: |
           npm install
-
           npm run build
-
           zip -r deploy.zip . -x '*.git*' 'node_modules/**' '*.github*'
        #  zip -r deploy.zip .next package.json public Procfile -x '*.git*' -x 'node_modules/*'
 
@@ -68,8 +61,8 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: cicd-team-2
           environment_name: Cicd-team-2-env
+        #  version_label: ${{ steps.format-time.outputs.replaced }}
           version_label: ${{ github.sha }}
           region: eu-north-1
           deployment_package: deploy.zip
           wait_for_deployment: true
-          use_existing_version_if_available: true
