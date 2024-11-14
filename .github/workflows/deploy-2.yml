@@ -14,7 +14,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18'
       - name: Generate deployment package
         run: npm run next-install && npm run generate-zip
 
@@ -22,7 +22,7 @@ jobs:
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_ANDERS }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_ANDERS }}
           application_name: cicd-7
           environment_name: Cicd-7-env
           version_label: ${{ github.sha }}
