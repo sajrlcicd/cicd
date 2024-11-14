@@ -10,13 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      - name: Generate deployment package
-        run: npm run next-install && npm run generate-zip
+      - name: Install dependencies and build
+
+        run: |
+          npm install
+          npm run build
+
+      - name: Create deployment package
+        run: |
+          zip -r deploy.zip . -x '*.git*' 'node_modules/**' '*.github*'
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
