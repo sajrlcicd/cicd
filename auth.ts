@@ -8,10 +8,11 @@ import bcrypt from 'bcrypt';
 import { Pool } from 'pg';
 
 const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL,
-    ssl: {
-        rejectUnauthorized: false, // For AWS RDS, to allow SSL without validating the certificate
-    },
+  connectionString: process.env.POSTGRES_URL,
+  ssl:
+    process.env.NODE_ENV === 'production'
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
 // Log the connection status
@@ -32,30 +33,27 @@ async function getUser(email: string): Promise<User | undefined> {
   }
 }
 
-
 export const { auth, signIn, signOut } = NextAuth({
-    ...authConfig,
-    providers: [
-        Credentials({
-            async authorize(credentials) {
-                const parsedCredentials = z
-                    .object({ email: z.string().email(), password: z.string().min(6) })
-                    .safeParse(credentials);
+  ...authConfig,
+  providers: [
+    Credentials({
+      async authorize(credentials) {
+        const parsedCredentials = z
+          .object({ email: z.string().email(), password: z.string().min(6) })
+          .safeParse(credentials);
 
-                if (parsedCredentials.success) {
-                    const { email, password } = parsedCredentials.data;
-                    const user = await getUser(email);
-                    if (!user) return null;
-                    const passwordsMatch = await bcrypt.compare(password, user.password);
+        if (parsedCredentials.success) {
+          const { email, password } = parsedCredentials.data;
+          const user = await getUser(email);
+          if (!user) return null;
+          const passwordsMatch = await bcrypt.compare(password, user.password);
 
-                    if (passwordsMatch) return user;
-                }
+          if (passwordsMatch) return user;
+        }
 
-                console.log('Invalid credentials');
-                return null;
-            }
-        },
-    ),
-
-    ],
+        console.log('Invalid credentials');
+        return null;
+      },
+    }),
+  ],
 });
