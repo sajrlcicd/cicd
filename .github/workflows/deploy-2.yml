@@ -1,5 +1,5 @@
 name: branch Deploy
-
+# fixed syntax error
 on:
   push:
     branches:
