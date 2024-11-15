@@ -9,6 +9,11 @@ import { Pool } from 'pg';
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
+  user: 'cicdteam1',
+  host: 'cicd-team-1.c5qusseso20n.eu-north-1.rds.amazonaws.com',
+  database: 'postgres',
+  password: 'cicd123ABC',
+  port: 5432,
   ssl:
     process.env.NODE_ENV === 'production'
       ? { rejectUnauthorized: false }
